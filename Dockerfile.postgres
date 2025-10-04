@@ -1,11 +1,6 @@
 FROM postgres:15
 
-# Instalar curl y wget para descargar el dataset
+# Instalar curl para descargar el dataset
 RUN apt-get update && \
-    apt-get install -y wget curl && \
+    apt-get install -y wget && \
     rm -rf /var/lib/apt/lists/*
-
-# Copiar scripts de inicialización y asegurarse que sean ejecutables dentro de la imagen
-COPY Backend/init-db/*.sh /docker-entrypoint-initdb.d/
-COPY Backend/init-db/*.sql /docker-entrypoint-initdb.d/
-RUN chmod +x /docker-entrypoint-initdb.d/*.sh || true
