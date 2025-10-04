@@ -14,6 +14,49 @@ services:
       - ./Backend/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    networks:
+      - covid-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: lab_backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: labuser
+      DB_PASSWORD: labpass
+      DB_NAME: labdb
+      FLASK_PORT: 5000
+      FLASK_ENV: development
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+    networks:
+      - covid-network
+    volumes:
+      - ./Backend:/app
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: lab_frontend
+    environment:
+      API_BASE_URL: http://backend:5000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - covid-network
 
 volumes:
   db_data:
+
+networks:
+  covid-network:
+    driver: bridge
