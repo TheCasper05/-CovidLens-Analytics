@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   db:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: lab_postgres
     environment:
       POSTGRES_USER: labuser
@@ -9,7 +11,7 @@ services:
       POSTGRES_DB: labdb
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
+      - ./Backend/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 
