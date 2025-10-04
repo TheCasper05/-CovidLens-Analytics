@@ -3,7 +3,8 @@ set -e
 
 echo "🔍 Checking if COVID-19 dataset exists..."
 
-CSV_FILE="/docker-entrypoint-initdb.d/owid-covid-data.csv"
+# Use /tmp which has write permissions inside container
+CSV_FILE="/tmp/owid-covid-data.csv"
 DATASET_URL="https://github.com/owid/covid-19-data/raw/master/public/data/owid-covid-data.csv"
 
 if [ -f "$CSV_FILE" ]; then
