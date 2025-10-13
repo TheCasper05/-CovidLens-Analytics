@@ -1,3 +1,4 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -5,12 +6,13 @@ export default defineNuxtConfig({
   ssr: false,
 
   app: {
-    baseURL: '/laboratorio-db/',  // 👈 obligatorio
+    baseURL: '/laboratorio-db/', // 👈 MUY IMPORTANTE
+    buildAssetsDir: '/laboratorio-db/_nuxt/' // 👈 Opcionalmente forzado
   },
 
   router: {
     options: {
-      hashMode: true               // 👈 evita pantalla en blanco en GitHub Pages
+      hashMode: true  // 👈 Evita páginas en blanco y rutas rotas
     }
   },
 
