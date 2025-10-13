@@ -6,13 +6,12 @@ export default defineNuxtConfig({
   ssr: false,
 
   app: {
-    baseURL: '/laboratorio-db/', // 👈 MUY IMPORTANTE
-    buildAssetsDir: '/laboratorio-db/_nuxt/' // 👈 Opcionalmente forzado
+    baseURL: '/laboratorio-db/' // 👈 SOLO esto, nada más
   },
 
   router: {
     options: {
-      hashMode: true  // 👈 Evita páginas en blanco y rutas rotas
+      hashMode: true  // 👈 Importante para GitHub Pages
     }
   },
 
