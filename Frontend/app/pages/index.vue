@@ -17,7 +17,7 @@
       <!-- Info Card - Shown when no filters applied -->
       <div v-if="!filtersApplied" class="info-section">
         <Card class="info-card">
-          
+
           <template #title>
             <h2>Información sobre COVID-19</h2>
           </template>
