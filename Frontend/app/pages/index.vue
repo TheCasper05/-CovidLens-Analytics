@@ -24,7 +24,7 @@
           <template #content>
             <div class="info-content">
               <p class="info-description">
-                Bienvenido al Dashboard de COVID-19. Utiliza los filtros superiores para visualizar datos específicos sobre:
+                Bienvenido al Dashboard de COVID-19. Utiliza los filtros laterales para visualizar datos específicos sobre:
               </p>
 
               <div class="info-grid">
