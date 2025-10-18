@@ -8,8 +8,86 @@
     </header>
 
     <div class="container">
-      <!-- Charts Grid -->
-      <div class="charts-grid">
+
+
+      <!-- Info Card - Shown when no filters applied -->
+      <div v-if="!filtersApplied" class="info-section">
+        <Card class="info-card">
+          <template #header>
+            <div class="info-icon">
+             <div class="cta-section">
+                <p class="cta-text">
+                  <i class="pi pi-arrow-left"></i>
+                  Selecciona una ubicación y métrica en los filtros superiores para comenzar a explorar los datos
+                </p>
+              </div>
+            </div>
+          </template>
+          <template #title>
+            <h2>Información sobre COVID-19</h2>
+          </template>
+          <template #content>
+            <div class="info-content">
+              <p class="info-description">
+                Bienvenido al Dashboard de COVID-19. Utiliza los filtros superiores para visualizar datos específicos sobre:
+              </p>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <i class="pi pi-chart-line"></i>
+                  <h3>Series de Tiempo</h3>
+                  <p>Evolución temporal de casos, muertes y vacunaciones</p>
+                </div>
+
+                <div class="info-item">
+                  <i class="pi pi-globe"></i>
+                  <h3>Top Países</h3>
+                  <p>Ranking de países según diferentes métricas</p>
+                </div>
+
+                <div class="info-item">
+                  <i class="pi pi-chart-pie"></i>
+                  <h3>Por Continente</h3>
+                  <p>Distribución de casos y muertes por continente</p>
+                </div>
+
+                <div class="info-item">
+                  <i class="pi pi-chart-bar"></i>
+                  <h3>Comparativas</h3>
+                  <p>Análisis comparativo entre diferentes regiones</p>
+                </div>
+              </div>
+
+              <div class="latest-updates">
+                <h3>Últimas Actualizaciones</h3>
+                <ul>
+                  <li>
+                    <i class="pi pi-check-circle"></i>
+                    <span>Los datos se actualizan periódicamente desde Our World in Data</span>
+                  </li>
+                  <li>
+                    <i class="pi pi-check-circle"></i>
+                    <span>Incluye información de más de 200 países y territorios</span>
+                  </li>
+                  <li>
+                    <i class="pi pi-check-circle"></i>
+                    <span>Visualizaciones interactivas con gráficos dinámicos</span>
+                  </li>
+                  <li>
+                    <i class="pi pi-check-circle"></i>
+                    <span>Análisis por ubicación geográfica y tipo de métrica</span>
+                  </li>
+                </ul>
+              </div>
+
+              
+            </div>
+          </template>
+        </Card>
+      </div>
+
+      <!-- Charts Grid - Shown when filters applied -->
+      <div v-else class="charts-grid">
         <!-- Chart 1: Time Series -->
         <Card class="chart-card">
           <template #title>Time Series - {{ selectedMetric }}</template>
@@ -67,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, provide } from "vue";
 import LineChart from "~/components/charts/LineChart.vue";
 import BarChart from "~/components/charts/BarChart.vue";
 import PieChart from "~/components/charts/PieChart.vue";
@@ -86,6 +164,7 @@ const continents = ref<any[]>([]);
 const locations = ref<string[]>([]);
 const selectedLocation = ref("World");
 const selectedMetric = ref("total_cases");
+const filtersApplied = ref(false);
 
 // Loading states
 const loadingLocations = ref(false);
@@ -228,18 +307,20 @@ const loadContinents = async () => {
 };
 
 const applyFilters = () => {
+  filtersApplied.value = true;
   loadTimeSeries();
   loadTopCountries();
+  loadContinents();
 };
+
+// Provide applyFilters to child components (Sidebar)
+provide('applyFilters', applyFilters);
 
 // Initialize
 onMounted(async () => {
   await Promise.all([
     loadSummary(),
     loadLocations(),
-    loadTimeSeries(),
-    loadTopCountries(),
-    loadContinents(),
   ]);
 });
 </script>
@@ -369,5 +450,160 @@ onMounted(async () => {
 :deep(.p-progressspinner) {
   margin: 2rem auto;
   display: block;
+}
+
+/* Info Card Styles */
+.info-section {
+  margin-bottom: 2rem;
+}
+
+.info-card {
+  max-width: 1200px;
+  margin: 0 auto;
+
+}
+
+.info-icon {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.info-icon i {
+  font-size: 4rem;
+  color: white;
+} 
+
+:deep(.info-card .p-card-title h2) {
+  text-align: center;
+  color: var(--text-primary);
+  font-size: 2rem;
+  margin: 0;
+}
+
+.info-content {
+  padding: 1rem;
+}
+
+.info-description {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.info-item {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--surface-hover);
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.info-item i {
+  font-size: 3rem;
+  color: #3b82f6;
+  margin-bottom: 1rem;
+}
+
+.info-item h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+}
+
+.info-item p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.latest-updates {
+  background: var(--surface-hover);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.latest-updates h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.latest-updates ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.latest-updates li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.latest-updates li:last-child {
+  border-bottom: none;
+}
+
+.latest-updates li i {
+  color: #10b981;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.latest-updates li span {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.cta-section {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.cta-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.cta-text i {
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 </style>

@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import Dropdown from 'primevue/dropdown'
 import Calendar from 'primevue/calendar'
 import InputText from 'primevue/inputtext'
@@ -98,6 +98,9 @@ const dateStart = ref(null)
 const dateEnd = ref(null)
 const regionSearch = ref('')
 
+// Inject the applyFilters function from parent (index.vue)
+const applyFiltersFromParent = inject('applyFilters', null)
+
 const applyFilters = () => {
   console.log('Filters applied:', {
     category: selectedCategory.value,
@@ -105,6 +108,11 @@ const applyFilters = () => {
     dateEnd: dateEnd.value,
     region: regionSearch.value
   })
+
+  // Call the parent's applyFilters function to show charts
+  if (applyFiltersFromParent) {
+    applyFiltersFromParent()
+  }
 }
 </script>
 
