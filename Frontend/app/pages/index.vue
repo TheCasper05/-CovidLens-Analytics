@@ -1,5 +1,9 @@
 <template>
   <div class="dashboard">
+    <!-- Sidebar -->
+    <Sidebar />
+
+    <div class="dashboard-content">
     <header class="header">
       <h1>📊 COVID-19 Dashboard</h1>
       <p class="subtitle">
@@ -90,7 +94,9 @@
       <div v-else class="charts-grid">
         <!-- Chart 1: Time Series -->
         <Card class="chart-card">
-          <template #title>Time Series - {{ selectedMetric }}</template>
+          <template #title>
+            Time Series - {{ currentFilters?.location || 'World' }}
+          </template>
           <template #content>
             <ProgressSpinner v-if="loadingTimeSeries" />
             <LineChart v-else-if="timeSeriesData" :data="timeSeriesData" />
@@ -99,7 +105,9 @@
 
         <!-- Chart 2: Top Countries -->
         <Card class="chart-card">
-          <template #title>Top 10 Countries by {{ selectedMetric }}</template>
+          <template #title>
+            Top 10 Countries - {{ currentFilters?.metric?.replace('_', ' ') || 'Metric' }}
+          </template>
           <template #content>
             <ProgressSpinner v-if="loadingTopCountries" />
             <BarChart v-else-if="topCountriesData" :data="topCountriesData" />
@@ -141,11 +149,13 @@
         </p>
       </footer>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, provide } from "vue";
+import Sidebar from "~/components/layout/Sidebar.vue";
 import LineChart from "~/components/charts/LineChart.vue";
 import BarChart from "~/components/charts/BarChart.vue";
 import PieChart from "~/components/charts/PieChart.vue";
@@ -159,27 +169,13 @@ const {
 } = useCovidApi();
 
 // State
-const summary = ref<any>(null);
-const continents = ref<any[]>([]);
-const locations = ref<string[]>([]);
-const selectedLocation = ref("World");
-const selectedMetric = ref("total_cases");
 const filtersApplied = ref(false);
+const currentFilters = ref<any>(null);
 
 // Loading states
-const loadingLocations = ref(false);
 const loadingTimeSeries = ref(false);
 const loadingTopCountries = ref(false);
 const loadingContinents = ref(false);
-
-// Metrics options
-const metrics = [
-  { label: "Total Cases", value: "total_cases" },
-  { label: "Total Deaths", value: "total_deaths" },
-  { label: "Total Vaccinations", value: "total_vaccinations" },
-  { label: "New Cases", value: "new_cases" },
-  { label: "New Deaths", value: "new_deaths" },
-];
 
 // Chart data
 const timeSeriesData = ref<any>(null);
@@ -187,45 +183,52 @@ const topCountriesData = ref<any>(null);
 const continentsData = ref<any>(null);
 const continentsDeathsData = ref<any>(null);
 
+// Stats for sidebar
+const chartStats = ref({
+  total: 0,
+  average: 0,
+  maximum: 0,
+});
+
 // Format number
 const formatNumber = (num: number) => {
   if (!num) return "0";
   return new Intl.NumberFormat("en-US").format(num);
 };
 
-// Load data
-const loadSummary = async () => {
-  try {
-    summary.value = await fetchSummary();
-  } catch (error) {
-    console.error("Error loading summary:", error);
+// Calculate stats from time series data
+const calculateStats = (data: any[]) => {
+  if (!data || data.length === 0) {
+    return { total: 0, average: 0, maximum: 0 };
   }
+
+  const values = data.map((d: any) => d.value || 0).filter((v) => v > 0);
+
+  if (values.length === 0) {
+    return { total: 0, average: 0, maximum: 0 };
+  }
+
+  const total = values[values.length - 1]; // Latest value
+  const average = values.reduce((sum, val) => sum + val, 0) / values.length;
+  const maximum = Math.max(...values);
+
+  return { total, average, maximum };
 };
 
-const loadLocations = async () => {
-  try {
-    loadingLocations.value = true;
-    locations.value = await fetchLocations();
-  } catch (error) {
-    console.error("Error loading locations:", error);
-  } finally {
-    loadingLocations.value = false;
-  }
-};
-
-const loadTimeSeries = async () => {
+// Load time series data
+const loadTimeSeries = async (location: string, metric: string) => {
   try {
     loadingTimeSeries.value = true;
-    const data: any = await fetchTimeSeries(
-      selectedLocation.value,
-      selectedMetric.value
-    );
+    const data: any = await fetchTimeSeries(location, metric);
+
+    // Calculate stats
+    chartStats.value = calculateStats(data);
 
     timeSeriesData.value = {
       labels: data.map((d: any) => d.date),
       datasets: [
         {
-          label: selectedMetric.value.replace("_", " ").toUpperCase(),
+          label: metric.replace("_", " ").toUpperCase(),
           data: data.map((d: any) => d.value),
           borderColor: "#3b82f6",
           backgroundColor: "rgba(59, 130, 246, 0.1)",
@@ -240,16 +243,17 @@ const loadTimeSeries = async () => {
   }
 };
 
-const loadTopCountries = async () => {
+// Load top countries data
+const loadTopCountries = async (metric: string) => {
   try {
     loadingTopCountries.value = true;
-    const data: any = await fetchTopCountries(selectedMetric.value, 10);
+    const data: any = await fetchTopCountries(metric, 10);
 
     topCountriesData.value = {
       labels: data.map((d: any) => d.location),
       datasets: [
         {
-          label: selectedMetric.value.replace("_", " ").toUpperCase(),
+          label: metric.replace("_", " ").toUpperCase(),
           data: data.map((d: any) => d.value),
           backgroundColor: "#10b981",
           borderColor: "#059669",
@@ -263,11 +267,11 @@ const loadTopCountries = async () => {
   }
 };
 
+// Load continents data
 const loadContinents = async () => {
   try {
     loadingContinents.value = true;
     const data: any = await fetchContinents();
-    continents.value = data;
 
     // Cases by continent (Pie)
     continentsData.value = {
@@ -306,23 +310,22 @@ const loadContinents = async () => {
   }
 };
 
-const applyFilters = () => {
+// Apply filters from Sidebar
+const applyFilters = (filters: any) => {
+  console.log('Applying filters:', filters);
+
+  currentFilters.value = filters;
   filtersApplied.value = true;
-  loadTimeSeries();
-  loadTopCountries();
+
+  // Load data with filters
+  loadTimeSeries(filters.location, filters.metric);
+  loadTopCountries(filters.metric);
   loadContinents();
 };
 
-// Provide applyFilters to child components (Sidebar)
+// Provide applyFilters and stats to child components (Sidebar)
 provide('applyFilters', applyFilters);
-
-// Initialize
-onMounted(async () => {
-  await Promise.all([
-    loadSummary(),
-    loadLocations(),
-  ]);
-});
+provide('chartStats', chartStats);
 </script>
 
 <style scoped>
@@ -335,6 +338,11 @@ onMounted(async () => {
   );
   padding-bottom: 2rem;
   transition: background 0.3s ease;
+  position: relative;
+}
+
+.dashboard-content {
+  margin-left: 280px; /* Width of sidebar */
 }
 
 .header {

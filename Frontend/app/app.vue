@@ -2,7 +2,6 @@
 <template>
   <div id="app">
     <AppBar />
-    <Sidebar />
     <main class="main-content">
       <NuxtPage />
     </main>
@@ -11,7 +10,6 @@
 
 <script setup>
 import AppBar from './components/layout/AppBar.vue'
-import Sidebar from './components/layout/Sidebar.vue'
 </script>
 
 <style>
@@ -83,7 +81,6 @@ body {
 }
 
 .main-content {
-  margin-left: 280px; /* Width of sidebar */
   margin-top: 60px; /* Height of AppBar */
   min-height: calc(100vh - 60px);
 }

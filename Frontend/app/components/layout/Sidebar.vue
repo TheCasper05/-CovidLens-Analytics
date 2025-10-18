@@ -7,43 +7,33 @@
         <h3>FILTROS</h3>
       </div>
 
-      <!-- Categoría -->
+      <!-- Ubicación -->
       <div class="filter-group">
-        <label>Categoría</label>
+        <label>Ubicación</label>
         <Dropdown
-          v-model="selectedCategory"
-          :options="categories"
+          v-model="selectedLocation"
+          :options="locations"
           optionLabel="label"
           optionValue="value"
-          placeholder="Todas"
+          placeholder="Selecciona ubicación"
+          :loading="loadingLocations"
+          filter
+          showClear
           class="w-full"
         />
       </div>
 
-      <!-- Rango Fechas -->
+      <!-- Métrica -->
       <div class="filter-group">
-        <label>Rango Fechas</label>
-        <div class="date-inputs">
-          <div class="date-field">
-            <i class="pi pi-calendar"></i>
-            <span>Inicio</span>
-            <Calendar v-model="dateStart" dateFormat="dd/mm/yy" class="w-full" />
-          </div>
-          <div class="date-field">
-            <i class="pi pi-calendar"></i>
-            <span>Fin</span>
-            <Calendar v-model="dateEnd" dateFormat="dd/mm/yy" class="w-full" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Región -->
-      <div class="filter-group">
-        <label>Región</label>
-        <span class="p-input-icon-left w-full">
-          <i class="pi pi-search"></i>
-          <InputText v-model="regionSearch" placeholder="Buscar..." class="w-full" />
-        </span>
+        <label>Métrica</label>
+        <Dropdown
+          v-model="selectedMetric"
+          :options="metrics"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecciona métrica"
+          class="w-full"
+        />
       </div>
 
       <!-- Aplicar Filtros Button -->
@@ -64,15 +54,15 @@
       <div class="stats-content">
         <div class="stat-item">
           <span class="stat-label">Total:</span>
-          <span class="stat-value">1.2M</span>
+          <span class="stat-value">{{ formatNumber(chartStats.total) }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">Promedio:</span>
-          <span class="stat-value">450</span>
+          <span class="stat-value">{{ formatNumber(chartStats.average) }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">Máximo:</span>
-          <span class="stat-value">1,200</span>
+          <span class="stat-value">{{ formatNumber(chartStats.maximum) }}</span>
         </div>
       </div>
     </div>
@@ -80,40 +70,81 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import Dropdown from 'primevue/dropdown'
-import Calendar from 'primevue/calendar'
-import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
-const selectedCategory = ref('todas')
-const categories = ref([
-  { label: 'Todas', value: 'todas' },
-  { label: 'Casos', value: 'casos' },
-  { label: 'Muertes', value: 'muertes' },
-  { label: 'Vacunaciones', value: 'vacunaciones' }
+const { fetchLocations } = useCovidApi()
+
+// Inject stats from parent (index.vue)
+const chartStats = inject('chartStats', ref({
+  total: 0,
+  average: 0,
+  maximum: 0
+}))
+
+// Filters state
+const selectedLocation = ref('World')
+const selectedMetric = ref('total_cases')
+
+// Locations data
+const locations = ref([])
+const loadingLocations = ref(false)
+
+// Metrics options
+const metrics = ref([
+  { label: 'Total de Casos', value: 'total_cases' },
+  { label: 'Total de Muertes', value: 'total_deaths' },
+  { label: 'Total de Vacunaciones', value: 'total_vaccinations' },
+  { label: 'Nuevos Casos', value: 'new_cases' },
+  { label: 'Nuevas Muertes', value: 'new_deaths' }
 ])
 
-const dateStart = ref(null)
-const dateEnd = ref(null)
-const regionSearch = ref('')
+// Load locations from API
+const loadLocations = async () => {
+  try {
+    loadingLocations.value = true
+    const data = await fetchLocations()
+    locations.value = data.map(loc => ({
+      label: loc,
+      value: loc
+    }))
+  } catch (error) {
+    console.error('Error loading locations:', error)
+  } finally {
+    loadingLocations.value = false
+  }
+}
 
 // Inject the applyFilters function from parent (index.vue)
 const applyFiltersFromParent = inject('applyFilters', null)
 
 const applyFilters = () => {
-  console.log('Filters applied:', {
-    category: selectedCategory.value,
-    dateStart: dateStart.value,
-    dateEnd: dateEnd.value,
-    region: regionSearch.value
-  })
+  const filters = {
+    location: selectedLocation.value,
+    metric: selectedMetric.value
+  }
 
-  // Call the parent's applyFilters function to show charts
+  console.log('Filters applied:', filters)
+
+  // Call the parent's applyFilters function with filter data
   if (applyFiltersFromParent) {
-    applyFiltersFromParent()
+    applyFiltersFromParent(filters)
   }
 }
+
+// Format number for stats
+const formatNumber = (num) => {
+  if (!num || num === 0) return '0'
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+  return num.toLocaleString()
+}
+
+// Initialize
+onMounted(() => {
+  loadLocations()
+})
 </script>
 
 <style scoped>
