@@ -1,0 +1,241 @@
+<template>
+  <aside class="sidebar">
+    <!-- Filtros Section -->
+    <div class="sidebar-section">
+      <div class="section-header">
+        <i class="pi pi-filter"></i>
+        <h3>FILTROS</h3>
+      </div>
+
+      <!-- Categoría -->
+      <div class="filter-group">
+        <label>Categoría</label>
+        <Dropdown
+          v-model="selectedCategory"
+          :options="categories"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todas"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Rango Fechas -->
+      <div class="filter-group">
+        <label>Rango Fechas</label>
+        <div class="date-inputs">
+          <div class="date-field">
+            <i class="pi pi-calendar"></i>
+            <span>Inicio</span>
+            <Calendar v-model="dateStart" dateFormat="dd/mm/yy" class="w-full" />
+          </div>
+          <div class="date-field">
+            <i class="pi pi-calendar"></i>
+            <span>Fin</span>
+            <Calendar v-model="dateEnd" dateFormat="dd/mm/yy" class="w-full" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Región -->
+      <div class="filter-group">
+        <label>Región</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <InputText v-model="regionSearch" placeholder="Buscar..." class="w-full" />
+        </span>
+      </div>
+
+      <!-- Aplicar Filtros Button -->
+      <Button
+        label="APLICAR FILTROS"
+        class="apply-btn"
+        @click="applyFilters"
+      />
+    </div>
+
+    <!-- Estadísticas Section -->
+    <div class="sidebar-section stats-section">
+      <div class="section-header">
+        <i class="pi pi-chart-bar"></i>
+        <h3>ESTADÍSTICAS</h3>
+      </div>
+
+      <div class="stats-content">
+        <div class="stat-item">
+          <span class="stat-label">Total:</span>
+          <span class="stat-value">1.2M</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Promedio:</span>
+          <span class="stat-value">450</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Máximo:</span>
+          <span class="stat-value">1,200</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import Dropdown from 'primevue/dropdown'
+import Calendar from 'primevue/calendar'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+
+const selectedCategory = ref('todas')
+const categories = ref([
+  { label: 'Todas', value: 'todas' },
+  { label: 'Casos', value: 'casos' },
+  { label: 'Muertes', value: 'muertes' },
+  { label: 'Vacunaciones', value: 'vacunaciones' }
+])
+
+const dateStart = ref(null)
+const dateEnd = ref(null)
+const regionSearch = ref('')
+
+const applyFilters = () => {
+  console.log('Filters applied:', {
+    category: selectedCategory.value,
+    dateStart: dateStart.value,
+    dateEnd: dateEnd.value,
+    region: regionSearch.value
+  })
+}
+</script>
+
+<style scoped>
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  width: 280px;
+  height: calc(100vh - 60px);
+  background: var(--surface-card);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  z-index: 5;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  padding: 1.5rem;
+}
+
+.sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-header i {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.date-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.date-field i {
+  color: #ef4444;
+  font-size: 0.9rem;
+}
+
+.date-field span {
+  min-width: 40px;
+}
+
+.apply-btn {
+  width: 100%;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 0.75rem;
+  background: #3b82f6;
+  border: none;
+  margin-top: 1rem;
+}
+
+.stats-section {
+  background: var(--surface-hover);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.stats-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+:deep(.p-dropdown),
+:deep(.p-calendar),
+:deep(.p-inputtext) {
+  font-size: 0.875rem;
+}
+
+:deep(.p-inputtext) {
+  padding: 0.5rem;
+}
+</style>

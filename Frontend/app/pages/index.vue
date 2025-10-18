@@ -8,69 +8,6 @@
     </header>
 
     <div class="container">
-      <!-- Summary Cards -->
-      <div class="summary-section" v-if="summary">
-        <Card class="summary-card">
-          <template #title>
-            <i class="pi pi-chart-line"></i> Total Cases
-          </template>
-          <template #content>
-            <h2>{{ formatNumber(summary.total_cases) }}</h2>
-            <small>Last update: {{ summary.last_update }}</small>
-          </template>
-        </Card>
-
-        <Card class="summary-card">
-          <template #title>
-            <i class="pi pi-exclamation-triangle"></i> Total Deaths
-          </template>
-          <template #content>
-            <h2>{{ formatNumber(summary.total_deaths) }}</h2>
-          </template>
-        </Card>
-
-        <Card class="summary-card">
-          <template #title>
-            <i class="pi pi-shield"></i> Total Vaccinations
-          </template>
-          <template #content>
-            <h2>{{ formatNumber(summary.total_vaccinations) }}</h2>
-          </template>
-        </Card>
-      </div>
-
-      <!-- Filters -->
-      <Card class="filters-card">
-        <template #title>Filters</template>
-        <template #content>
-          <div class="filters">
-            <div class="filter-group">
-              <label>Country/Region</label>
-              <Dropdown
-                v-model="selectedLocation"
-                :options="locations"
-                placeholder="Select location"
-                :loading="loadingLocations"
-                filter
-              />
-            </div>
-
-            <div class="filter-group">
-              <label>Metric</label>
-              <Dropdown
-                v-model="selectedMetric"
-                :options="metrics"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select metric"
-              />
-            </div>
-
-            <Button label="Apply Filters" icon="pi pi-filter" @click="applyFilters" />
-          </div>
-        </template>
-      </Card>
-
       <!-- Charts Grid -->
       <div class="charts-grid">
         <!-- Chart 1: Time Series -->
@@ -105,169 +42,195 @@
           <template #title>Deaths by Continent</template>
           <template #content>
             <ProgressSpinner v-if="loadingContinents" />
-            <BarChart v-else-if="continentsDeathsData" :data="continentsDeathsData" />
+            <BarChart
+              v-else-if="continentsDeathsData"
+              :data="continentsDeathsData"
+            />
           </template>
         </Card>
       </div>
 
       <footer class="footer">
         <p>
-          Data Source: <a href="https://ourworldindata.org/covid-deaths" target="_blank">Our World in Data</a>
+          Data Source:
+          <a href="https://ourworldindata.org/covid-deaths" target="_blank"
+            >Our World in Data</a
+          >
         </p>
-        <p>✍️ Authors: Jean Marthé, Oscar Gil, Juan Palacios | Universidad del Norte</p>
+        <p>
+          ✍️ Authors: Jean Marthé, Oscar Gil, Juan Palacios | Universidad del
+          Norte
+        </p>
       </footer>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import LineChart from '~/components/charts/LineChart.vue'
-import BarChart from '~/components/charts/BarChart.vue'
-import PieChart from '~/components/charts/PieChart.vue'
+import { ref, onMounted, computed } from "vue";
+import LineChart from "~/components/charts/LineChart.vue";
+import BarChart from "~/components/charts/BarChart.vue";
+import PieChart from "~/components/charts/PieChart.vue";
 
-const { fetchSummary, fetchContinents, fetchTopCountries, fetchTimeSeries, fetchLocations } = useCovidApi()
+const {
+  fetchSummary,
+  fetchContinents,
+  fetchTopCountries,
+  fetchTimeSeries,
+  fetchLocations,
+} = useCovidApi();
 
 // State
-const summary = ref<any>(null)
-const continents = ref<any[]>([])
-const locations = ref<string[]>([])
-const selectedLocation = ref('World')
-const selectedMetric = ref('total_cases')
+const summary = ref<any>(null);
+const continents = ref<any[]>([]);
+const locations = ref<string[]>([]);
+const selectedLocation = ref("World");
+const selectedMetric = ref("total_cases");
 
 // Loading states
-const loadingLocations = ref(false)
-const loadingTimeSeries = ref(false)
-const loadingTopCountries = ref(false)
-const loadingContinents = ref(false)
+const loadingLocations = ref(false);
+const loadingTimeSeries = ref(false);
+const loadingTopCountries = ref(false);
+const loadingContinents = ref(false);
 
 // Metrics options
 const metrics = [
-  { label: 'Total Cases', value: 'total_cases' },
-  { label: 'Total Deaths', value: 'total_deaths' },
-  { label: 'Total Vaccinations', value: 'total_vaccinations' },
-  { label: 'New Cases', value: 'new_cases' },
-  { label: 'New Deaths', value: 'new_deaths' }
-]
+  { label: "Total Cases", value: "total_cases" },
+  { label: "Total Deaths", value: "total_deaths" },
+  { label: "Total Vaccinations", value: "total_vaccinations" },
+  { label: "New Cases", value: "new_cases" },
+  { label: "New Deaths", value: "new_deaths" },
+];
 
 // Chart data
-const timeSeriesData = ref<any>(null)
-const topCountriesData = ref<any>(null)
-const continentsData = ref<any>(null)
-const continentsDeathsData = ref<any>(null)
+const timeSeriesData = ref<any>(null);
+const topCountriesData = ref<any>(null);
+const continentsData = ref<any>(null);
+const continentsDeathsData = ref<any>(null);
 
 // Format number
 const formatNumber = (num: number) => {
-  if (!num) return '0'
-  return new Intl.NumberFormat('en-US').format(num)
-}
+  if (!num) return "0";
+  return new Intl.NumberFormat("en-US").format(num);
+};
 
 // Load data
 const loadSummary = async () => {
   try {
-    summary.value = await fetchSummary()
+    summary.value = await fetchSummary();
   } catch (error) {
-    console.error('Error loading summary:', error)
+    console.error("Error loading summary:", error);
   }
-}
+};
 
 const loadLocations = async () => {
   try {
-    loadingLocations.value = true
-    locations.value = await fetchLocations()
+    loadingLocations.value = true;
+    locations.value = await fetchLocations();
   } catch (error) {
-    console.error('Error loading locations:', error)
+    console.error("Error loading locations:", error);
   } finally {
-    loadingLocations.value = false
+    loadingLocations.value = false;
   }
-}
+};
 
 const loadTimeSeries = async () => {
   try {
-    loadingTimeSeries.value = true
-    const data: any = await fetchTimeSeries(selectedLocation.value, selectedMetric.value)
+    loadingTimeSeries.value = true;
+    const data: any = await fetchTimeSeries(
+      selectedLocation.value,
+      selectedMetric.value
+    );
 
     timeSeriesData.value = {
       labels: data.map((d: any) => d.date),
-      datasets: [{
-        label: selectedMetric.value.replace('_', ' ').toUpperCase(),
-        data: data.map((d: any) => d.value),
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4
-      }]
-    }
+      datasets: [
+        {
+          label: selectedMetric.value.replace("_", " ").toUpperCase(),
+          data: data.map((d: any) => d.value),
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          tension: 0.4,
+        },
+      ],
+    };
   } catch (error) {
-    console.error('Error loading time series:', error)
+    console.error("Error loading time series:", error);
   } finally {
-    loadingTimeSeries.value = false
+    loadingTimeSeries.value = false;
   }
-}
+};
 
 const loadTopCountries = async () => {
   try {
-    loadingTopCountries.value = true
-    const data: any = await fetchTopCountries(selectedMetric.value, 10)
+    loadingTopCountries.value = true;
+    const data: any = await fetchTopCountries(selectedMetric.value, 10);
 
     topCountriesData.value = {
       labels: data.map((d: any) => d.location),
-      datasets: [{
-        label: selectedMetric.value.replace('_', ' ').toUpperCase(),
-        data: data.map((d: any) => d.value),
-        backgroundColor: '#10b981',
-        borderColor: '#059669'
-      }]
-    }
+      datasets: [
+        {
+          label: selectedMetric.value.replace("_", " ").toUpperCase(),
+          data: data.map((d: any) => d.value),
+          backgroundColor: "#10b981",
+          borderColor: "#059669",
+        },
+      ],
+    };
   } catch (error) {
-    console.error('Error loading top countries:', error)
+    console.error("Error loading top countries:", error);
   } finally {
-    loadingTopCountries.value = false
+    loadingTopCountries.value = false;
   }
-}
+};
 
 const loadContinents = async () => {
   try {
-    loadingContinents.value = true
-    const data: any = await fetchContinents()
-    continents.value = data
+    loadingContinents.value = true;
+    const data: any = await fetchContinents();
+    continents.value = data;
 
     // Cases by continent (Pie)
     continentsData.value = {
       labels: data.map((d: any) => d.continent),
-      datasets: [{
-        data: data.map((d: any) => d.total_cases),
-        backgroundColor: [
-          '#ef4444',
-          '#f59e0b',
-          '#10b981',
-          '#3b82f6',
-          '#8b5cf6',
-          '#ec4899'
-        ]
-      }]
-    }
+      datasets: [
+        {
+          data: data.map((d: any) => d.total_cases),
+          backgroundColor: [
+            "#ef4444",
+            "#f59e0b",
+            "#10b981",
+            "#3b82f6",
+            "#8b5cf6",
+            "#ec4899",
+          ],
+        },
+      ],
+    };
 
     // Deaths by continent (Bar)
     continentsDeathsData.value = {
       labels: data.map((d: any) => d.continent),
-      datasets: [{
-        label: 'Total Deaths',
-        data: data.map((d: any) => d.total_deaths),
-        backgroundColor: '#ef4444',
-        borderColor: '#dc2626'
-      }]
-    }
+      datasets: [
+        {
+          label: "Total Deaths",
+          data: data.map((d: any) => d.total_deaths),
+          backgroundColor: "#ef4444",
+          borderColor: "#dc2626",
+        },
+      ],
+    };
   } catch (error) {
-    console.error('Error loading continents:', error)
+    console.error("Error loading continents:", error);
   } finally {
-    loadingContinents.value = false
+    loadingContinents.value = false;
   }
-}
+};
 
 const applyFilters = () => {
-  loadTimeSeries()
-  loadTopCountries()
-}
+  loadTimeSeries();
+  loadTopCountries();
+};
 
 // Initialize
 onMounted(async () => {
@@ -276,34 +239,43 @@ onMounted(async () => {
     loadLocations(),
     loadTimeSeries(),
     loadTopCountries(),
-    loadContinents()
-  ])
-})
+    loadContinents(),
+  ]);
+});
 </script>
 
 <style scoped>
 .dashboard {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: calc(100vh - 60px);
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%
+  );
   padding-bottom: 2rem;
+  transition: background 0.3s ease;
 }
 
 .header {
-  background: white;
+  background: var(--surface-card);
   padding: 2rem;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  margin: 0;
 }
 
 .header h1 {
   font-size: 2.5rem;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1.1rem;
+  transition: color 0.3s ease;
 }
 
 .container {
@@ -349,7 +321,8 @@ onMounted(async () => {
 
 .filter-group label {
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .charts-grid {
@@ -366,14 +339,16 @@ onMounted(async () => {
 .footer {
   text-align: center;
   padding: 2rem;
-  background: white;
+  background: var(--surface-card);
   border-radius: 8px;
   margin-top: 2rem;
+  transition: background 0.3s ease;
 }
 
 .footer p {
   margin: 0.5rem 0;
-  color: #64748b;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .footer a {

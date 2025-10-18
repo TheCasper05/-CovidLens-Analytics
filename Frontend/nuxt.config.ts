@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   ssr: false,
 
   app: {
-    baseURL: '/laboratorio-db/' // 👈 SOLO esto, nada más
+    baseURL: '/' // 👈 Usar '/' para desarrollo local
   },
 
   router: {
