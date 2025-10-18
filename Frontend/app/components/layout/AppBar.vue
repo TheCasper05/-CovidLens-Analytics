@@ -5,7 +5,7 @@
       <span class="title">Covid Dashboard</span>
     </div>
     <div class="right">
-      <Button icon="pi pi-bell" class="p-button-text p-button-rounded notification-btn" />
+
       <span class="theme-switch">
         <i class="pi pi-sun" :class="{ active: !isDark }" />
         <InputSwitch :model-value="isDark" @update:model-value="toggleTheme" />
@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import Button from 'primevue/button'
 import InputSwitch from 'primevue/inputswitch'
 
 const { isDark, toggleTheme, initTheme } = useTheme()

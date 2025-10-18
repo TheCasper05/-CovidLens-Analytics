@@ -17,16 +17,7 @@
       <!-- Info Card - Shown when no filters applied -->
       <div v-if="!filtersApplied" class="info-section">
         <Card class="info-card">
-          <template #header>
-            <div class="info-icon">
-             <div class="cta-section">
-                <p class="cta-text">
-                  <i class="pi pi-arrow-left"></i>
-                  Selecciona una ubicación y métrica en los filtros superiores para comenzar a explorar los datos
-                </p>
-              </div>
-            </div>
-          </template>
+          
           <template #title>
             <h2>Información sobre COVID-19</h2>
           </template>
@@ -92,7 +83,7 @@
 
       <!-- Charts Grid - Shown when filters applied -->
       <div v-else class="charts-grid">
-        <!-- Chart 1: Time Series -->
+        <!-- Chart 1: Time Series - Always shown -->
         <Card class="chart-card">
           <template #title>
             Time Series - {{ currentFilters?.location || 'World' }}
@@ -103,8 +94,8 @@
           </template>
         </Card>
 
-        <!-- Chart 2: Top Countries -->
-        <Card class="chart-card">
+        <!-- Chart 2: Top Countries - Only for World -->
+        <Card v-if="currentFilters?.location === 'World'" class="chart-card">
           <template #title>
             Top 10 Countries - {{ currentFilters?.metric?.replace('_', ' ') || 'Metric' }}
           </template>
@@ -114,8 +105,8 @@
           </template>
         </Card>
 
-        <!-- Chart 3: Continents -->
-        <Card class="chart-card">
+        <!-- Chart 3: Continents Cases - Only for World -->
+        <Card v-if="currentFilters?.location === 'World'" class="chart-card">
           <template #title>Cases by Continent</template>
           <template #content>
             <ProgressSpinner v-if="loadingContinents" />
@@ -123,8 +114,8 @@
           </template>
         </Card>
 
-        <!-- Chart 4: Deaths by Continent -->
-        <Card class="chart-card">
+        <!-- Chart 4: Continents Deaths - Only for World -->
+        <Card v-if="currentFilters?.location === 'World'" class="chart-card">
           <template #title>Deaths by Continent</template>
           <template #content>
             <ProgressSpinner v-if="loadingContinents" />
@@ -317,10 +308,14 @@ const applyFilters = (filters: any) => {
   currentFilters.value = filters;
   filtersApplied.value = true;
 
-  // Load data with filters
+  // Load time series (always)
   loadTimeSeries(filters.location, filters.metric);
-  loadTopCountries(filters.metric);
-  loadContinents();
+
+  // Only load top countries and continents if location is World
+  if (filters.location === 'World') {
+    loadTopCountries(filters.metric);
+    loadContinents();
+  }
 };
 
 // Provide applyFilters and stats to child components (Sidebar)
