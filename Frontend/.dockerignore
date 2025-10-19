@@ -1,8 +1,0 @@
-node_modules
-.nuxt
-.output
-.git
-.env.local
-*.log
-dist
-.DS_Store
