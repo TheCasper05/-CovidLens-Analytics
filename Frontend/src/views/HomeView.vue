@@ -10,6 +10,9 @@ const totalDeaths = ref(0)
 const totalVaccinations = ref(0)
 const loading = ref(true)  
 
+function formatNumber(num: number): string {
+  return num.toLocaleString('en-US')
+}
 onMounted(async () => {
   try {
     loading.value = true
@@ -58,23 +61,23 @@ onMounted(async () => {
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
   <StatsCard 
-    title="Total Cases"
-    :value="totalCases"
+  title="Top 10 - Cases"
+    :value="formatNumber(totalCases)" 
     icon="😷"
     color="yellow"
    
   />
   <StatsCard 
-    title="Total Deaths"
+      title="Top 10 - Deaths"
     :value="totalDeaths"
     icon="💀"
-    color="red"
+    color="pink"
   />
   <StatsCard 
-    title="Total Vaccinations"
+     title="Top 10 - Vaccinations"
     :value="totalVaccinations"
     icon="💉"
-    color="blue"
+    color="lime"
   />
 </div>
 
