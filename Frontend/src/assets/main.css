@@ -3,3 +3,52 @@ stylesheet. This allows you to use the utility classes and styles provided by Ta
 project. By importing Tailwind CSS, you can easily apply pre-defined styles to your HTML elements
 without having to write custom CSS from scratch. */
 @import "tailwindcss";
+
+/* PrimeVue Dropdown - Neobrutalist Styles */
+.p-dropdown {
+  @apply border-2 border-black bg-white;
+}
+
+.p-dropdown-label {
+  @apply px-4 py-2 font-bold;
+}
+
+.p-dropdown-trigger {
+  @apply border-l-2 border-black px-3;
+}
+
+.p-dropdown-overlay {
+  @apply border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white mt-1;
+}
+
+.p-dropdown-list {
+  @apply p-0;
+}
+
+.p-dropdown-option {
+  @apply px-4 py-2 border-b-2 border-black cursor-pointer transition-colors;
+}
+
+.p-dropdown-option:hover {
+  @apply bg-yellow-300;
+}
+
+.p-dropdown-option:last-child {
+  @apply border-b-0;
+}
+
+.p-dropdown-option-selected {
+  @apply bg-lime-400 font-bold;
+}
+
+.p-dropdown-clear-icon {
+  @apply text-black font-bold;
+}
+
+.p-dropdown-filter-container {
+  @apply border-b-2 border-black p-2;
+}
+
+.p-dropdown-filter {
+  @apply w-full border-2 border-black px-3 py-2 font-mono;
+}
