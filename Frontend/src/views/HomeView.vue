@@ -201,7 +201,7 @@ async function handleFiltersApplied(filters) {
         <!-- Info Card - Se muestra cuando NO hay filtros aplicados -->
         <div
           v-else
-          class="bg-yellow-400 border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+          class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
         >
           <h2 class="text-2xl font-black uppercase mb-4">
             📊 Welcome to COVID-19 Dashboard
@@ -220,7 +220,7 @@ async function handleFiltersApplied(filters) {
             </li>
             <li>
               Click
-              <span class="bg-black text-yellow-400 px-2">APPLY FILTERS</span>
+              <span class="bg-black text-lime-400 px-2">APPLY FILTERS</span>
             </li>
           </ol>
           <p class="text-lg font-bold mt-4">
@@ -231,3 +231,4 @@ async function handleFiltersApplied(filters) {
     </main>
   </div>
 </template>
+
