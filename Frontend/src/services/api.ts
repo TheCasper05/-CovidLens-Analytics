@@ -28,7 +28,7 @@ export default apiClient;
 
 // Continents summary data
 export const getContinents = async () => {
-  const response = await apiClient.get<ContinentData[]>("/continents/summary");
+  const response = await apiClient.get<ContinentData[]>("/continents");
   return response.data;
 };
 
@@ -90,7 +90,9 @@ export const getLocationData = async () => {
 
 // Time series data for a location and metric
 export const getTimeSeriesData = async (location: string, metric: string) => {
-  const response = await apiClient.get<timeSeriesData[]>(`/time-series/${location}/${metric}`);
+  const response = await apiClient.get<timeSeriesData[]>('/time-series', {
+    params: { location, metric }
+  });
   return response.data;
 };
 /**
@@ -112,7 +114,7 @@ export const getTimeSeriesData = async (location: string, metric: string) => {
 
 // Date range data for a location
 export const getDateRangeData = async (location: string, startDate: string, endDate: string) => {
-  const response = await apiClient.get<DateRangeData[]>(`/date-range/`, {
+const response = await apiClient.get<DateRangeData[]>('/date-range', {
     params: { location, startDate, endDate },
   });
   return response.data;
