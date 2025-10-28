@@ -125,14 +125,15 @@ async function handleFiltersApplied(filters) {
 }
 </script>
 <template>
-  <div class="flex min-h-screen bg-gray-100">
+  <TopBar />
+  <div class="flex bg-gray-100 min-h-[calc(100vh-4rem)]" style="height:calc(100vh - 4rem);">
     <!-- Sidebar (FilterPanel) -->
-    <aside class="w-80 p-4 bg-gray-50">
+    <aside class="w-80 p-4 bg-gray-50 h-[calc(100vh-4rem)] sticky top-16 z-40">
       <FilterPanel @filtersApplied="handleFiltersApplied" @filtersReset="handleFiltersReset" />
     </aside>
 
     <!-- Contenido Principal -->
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 overflow-y-auto h-[calc(100vh-4rem)]">
       <div class="max-w-7xl mx-auto">
         <!-- Título -->
         <h1 class="text-3xl font-black uppercase mb-6">
