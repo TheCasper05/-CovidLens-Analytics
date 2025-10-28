@@ -1,20 +1,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
-
 import { getLocationData } from "@/services/api";
 
 // State variables for filter options
-const selectedCountry = ref(null);
-const selectedContinent = ref(null);
-const selectedMetric = ref(null);
-const startDate = ref("");
-const endDate = ref("");
+const selectedLocation = ref("World");
+const selectedMetric = ref("overall");
 
-// Countries data (loaded from backend)
-const countries = ref([]);
+const emit = defineEmits(["filtersApplied", "filtersReset"]);
+
+// Locations data (World + countries loaded from backend)
+const locations = ref(["World"]);
 
 // Metric options
 const metrics = [
+  { label: "Overall (All Metrics)", value: "overall" }, 
   { label: "Total Cases", value: "total_cases" },
   { label: "Total Deaths", value: "total_deaths" },
   { label: "Total Vaccinations", value: "total_vaccinations" },
@@ -22,48 +21,39 @@ const metrics = [
   { label: "New Deaths", value: "new_deaths" },
 ];
 
-// Continent options
-const continents = [
-  "Africa",
-  "Asia",
-  "Europe",
-  "North America",
-  "Oceania",
-  "South America",
-];
-
 // Fetch countries data on component mount
 onMounted(async () => {
   try {
-    countries.value = await getLocationData();
-    console.log("Fetched countries:", countries.value);
+    const countries = await getLocationData();
+    locations.value = ["World", ...countries];
+    console.log("Fetched locations:", locations.value);
   } catch (error) {
-    console.error("Error fetching countries:", error);
+    console.error("Error fetching locations:", error);
   }
 });
 
 // Function to apply filters
 function applyFilters() {
-  console.log("=== Applied Filters ===");
-  console.log("Country:", selectedCountry.value);
-  console.log("Continent:", selectedContinent.value);
-  console.log("Metric:", selectedMetric.value);
-  console.log("Start Date:", startDate.value);
-  console.log("End Date:", endDate.value);
+  emit('filtersApplied', {
+    location: selectedLocation.value,
+    metric: selectedMetric.value
+  });
 
-  // Later we'll call the API with these filters
+  console.log("Filters sent to parent:", {
+    location: selectedLocation.value,
+    metric: selectedMetric.value
+  });
 }
 
 // Function to reset filters
 function resetFilters() {
-  selectedCountry.value = null;
-  selectedContinent.value = null;
-  selectedMetric.value = null;
-  startDate.value = "";
-  endDate.value = "";
+  selectedLocation.value = "World";
+  selectedMetric.value = "overall";
+  emit('filtersReset');
   console.log("Filters reset");
 }
 </script>
+
 <template>
   <div
     class="p-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sticky top-4"
@@ -73,34 +63,15 @@ function resetFilters() {
       🔍 FILTERS
     </h2>
 
-    <!-- Country Select -->
+    <!-- Location Select -->
     <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">Country:</label>
+      <label class="block font-bold mb-2 uppercase text-sm">Location:</label>
       <select
-        v-model="selectedCountry"
+        v-model="selectedLocation"
         class="w-full border-2 border-black px-4 py-2 bg-white font-bold cursor-pointer focus:outline-none focus:border-4"
       >
-        <option value="">Select a country</option>
-        <option v-for="country in countries" :key="country" :value="country">
-          {{ country }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Continent Select -->
-    <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">Continent:</label>
-      <select
-        v-model="selectedContinent"
-        class="w-full border-2 border-black px-4 py-2 bg-white font-bold cursor-pointer focus:outline-none focus:border-4"
-      >
-        <option value="">Select a continent</option>
-        <option
-          v-for="continent in continents"
-          :key="continent"
-          :value="continent"
-        >
-          {{ continent }}
+        <option v-for="location in locations" :key="location" :value="location">
+          {{ location }}
         </option>
       </select>
     </div>
@@ -112,7 +83,7 @@ function resetFilters() {
         v-model="selectedMetric"
         class="w-full border-2 border-black px-4 py-2 bg-white font-bold cursor-pointer focus:outline-none focus:border-4"
       >
-        <option value="">Select a metric</option>
+        <option :value="null" disabled>Select a metric</option>
         <option
           v-for="metric in metrics"
           :key="metric.value"
@@ -121,26 +92,6 @@ function resetFilters() {
           {{ metric.label }}
         </option>
       </select>
-    </div>
-
-    <!-- Start Date -->
-    <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">Start Date:</label>
-      <input
-        v-model="startDate"
-        type="date"
-        class="w-full border-2 border-black px-4 py-2 font-mono bg-white focus:outline-none focus:border-4"
-      />
-    </div>
-
-    <!-- End Date -->
-    <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">End Date:</label>
-      <input
-        v-model="endDate"
-        type="date"
-        class="w-full border-2 border-black px-4 py-2 font-mono bg-white focus:outline-none focus:border-4"
-      />
     </div>
 
     <!-- Buttons -->
