@@ -15,26 +15,26 @@ const chartOptions = computed(() => ({
     type: 'pie'
   },
   labels: props.data.map(item => item.label),
-  colors: props.colors || ['#fbbf24', '#ec4899', '#84cc16', '#3b82f6', '#8b5cf6', '#f59e0b'],
+  colors: props.colors || ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
   legend: {
     position: 'bottom',
     labels: {
-      colors: '#000',
+      colors: '#4b5563',
       useSeriesColors: false
     }
   },
   dataLabels: {
     enabled: true,
     style: {
-      fontSize: '14px',
-      fontWeight: 'bold',
-      colors: ['#000']
+      fontSize: '12px',
+      fontWeight: '600',
+      colors: ['#fff']
     }
   },
   stroke: {
     show: true,
-    width: 3,
-    colors: ['#000']
+    width: 2,
+    colors: ['#fff']
   }
 }));
 
@@ -42,9 +42,9 @@ const series = computed(() => props.data.map(item => item.value));
 </script>
 
 <template>
-  <div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
     <!-- Título del gráfico -->
-    <h3 class="text-xl font-black uppercase mb-4 border-b-4 border-black pb-2">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
       {{ title }}
     </h3>
 

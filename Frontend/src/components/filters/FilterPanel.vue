@@ -56,19 +56,19 @@ function resetFilters() {
 
 <template>
   <div
-    class="p-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sticky top-4"
+    class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm"
   >
     <!-- Title -->
-    <h2 class="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">
-      🔍 FILTERS
+    <h2 class="text-xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-2">
+      Filters
     </h2>
 
     <!-- Location Select -->
     <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">Location:</label>
+      <label class="block font-medium mb-2 text-sm text-gray-700">Location:</label>
       <select
         v-model="selectedLocation"
-        class="w-full border-2 border-black px-4 py-2 bg-white font-bold cursor-pointer focus:outline-none focus:border-4"
+        class="w-full border border-gray-300 rounded px-4 py-2 bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option v-for="location in locations" :key="location" :value="location">
           {{ location }}
@@ -78,10 +78,10 @@ function resetFilters() {
 
     <!-- Metric Select -->
     <div class="mb-4">
-      <label class="block font-bold mb-2 uppercase text-sm">Metric:</label>
+      <label class="block font-medium mb-2 text-sm text-gray-700">Metric:</label>
       <select
         v-model="selectedMetric"
-        class="w-full border-2 border-black px-4 py-2 bg-white font-bold cursor-pointer focus:outline-none focus:border-4"
+        class="w-full border border-gray-300 rounded px-4 py-2 bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option :value="null" disabled>Select a metric</option>
         <option
@@ -98,16 +98,16 @@ function resetFilters() {
     <div class="flex gap-4 mt-6">
       <button
         @click="applyFilters"
-        class="flex-1 bg-lime-400 border-2 border-black px-4 py-3 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+        class="flex-1 bg-blue-600 text-white rounded px-4 py-3 font-semibold shadow hover:bg-blue-700 transition-colors"
       >
-        ✓ Apply
+        Apply
       </button>
 
       <button
         @click="resetFilters"
-        class="flex-1 bg-pink-400 border-2 border-black px-4 py-3 font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+        class="flex-1 bg-gray-200 text-gray-700 rounded px-4 py-3 font-semibold shadow hover:bg-gray-300 transition-colors"
       >
-        ✕ Reset
+        Reset
       </button>
     </div>
   </div>

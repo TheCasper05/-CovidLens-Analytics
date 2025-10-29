@@ -1,7 +1,4 @@
 <script setup lang="ts">
-function handleFiltersReset() {
-  filtersApplied.value = false;
-}
 import { ref, onMounted, type Ref } from "vue";
 import StatsCard from "@/components/cards/StatsCard.vue";
 import FilterPanel from "@/components/filters/FilterPanel.vue";
@@ -123,20 +120,24 @@ async function handleFiltersApplied(filters) {
     loading.value = false;
   }
 }
+
+function handleFiltersReset() {
+  filtersApplied.value = false;
+}
 </script>
 <template>
   <TopBar />
-  <div class="flex bg-gray-100 min-h-[calc(100vh-4rem)]" style="height:calc(100vh - 4rem);">
+  <div class="flex bg-white min-h-[calc(100vh-4rem)]" style="height:calc(100vh - 4rem);">
     <!-- Sidebar (FilterPanel) -->
-    <aside class="w-80 p-4 bg-gray-50 h-[calc(100vh-4rem)] sticky top-16 z-40">
+    <aside class="w-72 p-6 bg-gray-50 border-r border-gray-200 h-[calc(100vh-4rem)] sticky top-16 z-40 shadow-sm">
       <FilterPanel @filtersApplied="handleFiltersApplied" @filtersReset="handleFiltersReset" />
     </aside>
 
     <!-- Contenido Principal -->
-    <main class="flex-1 p-6 overflow-y-auto h-[calc(100vh-4rem)]">
-      <div class="max-w-7xl mx-auto">
+    <main class="flex-1 p-8 overflow-y-auto h-[calc(100vh-4rem)]">
+      <div class="max-w-6xl mx-auto">
         <!-- Título -->
-        <h1 class="text-3xl font-black uppercase mb-6">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-6">
           {{ title }}
         </h1>
 
@@ -145,55 +146,50 @@ async function handleFiltersApplied(filters) {
           <StatsCard
             title="Top 10 - Cases"
             :value="formatNumber(totalCases)"
-            icon="😷"
-            color="yellow"
+            icon=""
+            color="white"
+            class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 text-center"
           />
           <StatsCard
             title="Top 10 - Deaths"
             :value="formatNumber(totalDeaths)"
-            icon="💀"
-            color="pink"
+            icon=""
+            color="white"
+            class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 text-center"
           />
           <StatsCard
             title="Top 10 - Vaccinations"
             :value="formatNumber(totalVaccinations)"
-            icon="💉"
-            color="lime"
+            icon=""
+            color="white"
+            class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 text-center"
           />
         </div>
 
         <!-- Gráficas - Solo se muestran después de aplicar filtros -->
         <div v-if="filtersApplied">
-          <!-- Grid 2x2 - Todas las gráficas lado a lado -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- LineChart - Siempre se muestra -->
             <LineChart
               title="Cases Over Time"
               :data="chartData"
-              color="#84cc16"
+              color="#2563eb"
             />
-
-            <!-- Top 10 Countries - Solo en World -->
             <HorizontalBarChart
               v-if="isWorldView"
               title="Top 10 Countries"
               :data="topCountriesData"
-              color="#3b82f6"
+              color="#10b981"
             />
-
-            <!-- Cases by Continent - Solo en World Y solo si es "overall" -->
             <PieChart
               v-if="isWorldView && selectedMetric === 'overall'"
               title="Cases by Continent"
               :data="continentCasesData"
             />
-
-            <!-- Deaths by Continent - Solo en World Y solo si es "overall" -->
             <BarChart
               v-if="isWorldView && selectedMetric === 'overall'"
               title="Deaths by Continent"
               :data="continentDeathsData"
-              color="#ec4899"
+              color="#ef4444"
             />
           </div>
         </div>
@@ -201,29 +197,24 @@ async function handleFiltersApplied(filters) {
         <!-- Info Card - Se muestra cuando NO hay filtros aplicados -->
         <div
           v-else
-          class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+          class="bg-white border border-gray-200 rounded-lg shadow-sm p-8 text-gray-800"
         >
-          <h2 class="text-2xl font-black uppercase mb-4">
-            📊 Welcome to COVID-19 Dashboard
+          <h2 class="text-2xl font-semibold mb-4">
+            Welcome to COVID-19 Dashboard
           </h2>
-          <p class="text-lg font-bold mb-2">To get started:</p>
-          <ol class="list-decimal list-inside space-y-2 font-bold">
+          <p class="text-lg mb-2">To get started:</p>
+          <ol class="list-decimal list-inside space-y-2">
             <li>
-              Select a
-              <span class="bg-black text-yellow-400 px-2">LOCATION</span> (World
-              or a specific country)
+              Select a <span class="font-semibold text-blue-700">Location</span> (World or a specific country)
             </li>
             <li>
-              Select a
-              <span class="bg-black text-yellow-400 px-2">METRIC</span> (cases,
-              deaths, vaccinations, etc.)
+              Select a <span class="font-semibold text-blue-700">Metric</span> (cases, deaths, vaccinations, etc.)
             </li>
             <li>
-              Click
-              <span class="bg-black text-lime-400 px-2">APPLY FILTERS</span>
+              Click <span class="font-semibold text-blue-700">Apply Filters</span>
             </li>
           </ol>
-          <p class="text-lg font-bold mt-4">
+          <p class="text-lg mt-4">
             The dashboard will display different charts based on your selection!
           </p>
         </div>

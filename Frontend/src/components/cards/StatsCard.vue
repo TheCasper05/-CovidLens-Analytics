@@ -11,26 +11,22 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <div 
-    :class="`bg-${color}-400 border-4 border-black p-6 
-             shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]
-             hover:translate-x-[2px] hover:translate-y-[2px]
-             hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
-             transition-all`"
-  >
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
     <!-- Icon & Title -->
-    <div class="flex items-center gap-2 mb-4">
-      <span class="text-3xl">{{ icon }}</span>
-      <h3 class="text-sm font-black uppercase">{{ title }}</h3>
+    <div class="flex items-center gap-3 mb-4">
+      <div v-if="icon" class="bg-blue-50 rounded-full p-2">
+        <span class="text-2xl">{{ icon }}</span>
+      </div>
+      <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">{{ title }}</h3>
     </div>
 
     <!-- Value -->
-    <p class="text-4xl font-black mb-2">
+    <p class="text-3xl font-bold text-gray-900 mb-2">
       {{ value }}
     </p>
 
     <!-- Change (optional) -->
-    <p v-if="change" class="text-sm font-bold">
+    <p v-if="change" class="text-sm font-medium text-gray-500">
       {{ change }}
     </p>
   </div>

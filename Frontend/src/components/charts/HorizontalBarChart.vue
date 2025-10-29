@@ -19,7 +19,7 @@ const chartOptions = computed(() => ({
   plotOptions: {
     bar: {
       horizontal: true,
-      borderRadius: 0,
+      borderRadius: 4,
       dataLabels: {
         position: 'top'
       }
@@ -29,22 +29,21 @@ const chartOptions = computed(() => ({
     enabled: true,
     offsetX: 30,
     style: {
-      fontSize: '12px',
-      fontWeight: 'bold',
-      colors: ['#000']
+      fontSize: '11px',
+      fontWeight: '600',
+      colors: ['#4b5563']
     },
     formatter: (value: number) => value.toLocaleString('en-US')
   },
   stroke: {
-    show: true,
-    width: 3,
-    colors: ['#000']
+    show: false
   },
   xaxis: {
     categories: props.data.map(item => item.label),
     labels: {
       style: {
-        fontWeight: 'bold'
+        fontWeight: '500',
+        colors: '#6b7280'
       },
       formatter: (value: number) => value.toLocaleString('en-US')
     }
@@ -52,14 +51,15 @@ const chartOptions = computed(() => ({
   yaxis: {
     labels: {
       style: {
-        fontWeight: 'bold'
+        fontWeight: '500',
+        colors: '#6b7280'
       }
     }
   },
-  colors: [props.color || '#3b82f6'],
+  colors: [props.color || '#10b981'],
   grid: {
-    borderColor: '#000',
-    strokeDashArray: 0
+    borderColor: '#e5e7eb',
+    strokeDashArray: 4
   }
 }));
 
@@ -70,8 +70,8 @@ const series = computed(() => [{
 </script>
 
 <template>
-  <div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-    <h3 class="text-xl font-black uppercase mb-4 border-b-4 border-black pb-2">
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
       {{ title }}
     </h3>
     <VueApexCharts
