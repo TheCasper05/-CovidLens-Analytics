@@ -16,6 +16,12 @@ services:
       - "5432:5432"
     networks:
       - covid-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U labuser -d labdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   backend:
     build:
@@ -33,11 +39,24 @@ services:
     ports:
       - "5001:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - covid-network
     volumes:
       - ./Backend:/app
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: lab_frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - covid-network
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5001/api
 
 volumes:
   db_data:
