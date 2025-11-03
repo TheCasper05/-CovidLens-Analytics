@@ -9,5 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY Backend/ ./
 
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
 # Railway provides PORT env variable
-CMD gunicorn --bind 0.0.0.0:$PORT run:app
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT run:app"]
