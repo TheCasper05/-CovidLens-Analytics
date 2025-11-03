@@ -1,7 +1,8 @@
 {
-  "name": "frontend",
-  "version": "0.0.0",
+  "name": "covidlens-analytics",
+  "version": "1.0.0",
   "private": true,
+  "description": "Real-time COVID-19 data visualization and analytics platform",
   "type": "module",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

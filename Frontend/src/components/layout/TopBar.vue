@@ -5,14 +5,14 @@
 
         <!-- Logo & Title -->
         <div class="flex items-center gap-3">
-          <div class="bg-blue-600 rounded p-2">
-            <span class="text-2xl text-white">📊</span>
+          <div class="bg-linear-to-br from-blue-600 to-purple-600 rounded-lg p-2 shadow-md">
+            <span class="text-2xl">🔬</span>
           </div>
           <div>
-            <h1 class="text-xl font-semibold text-gray-800 tracking-tight">
-              COVID-19 Dashboard
+            <h1 class="text-xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+              CovidLens Analytics
             </h1>
-            <p class="text-xs text-gray-500">Real-time global statistics</p>
+            <p class="text-xs text-gray-500 font-medium">Real-time pandemic insights</p>
           </div>
         </div>
 

@@ -1,0 +1,35 @@
+databases:
+  - name: covid-db
+    databaseName: labdb
+    user: labuser
+    plan: free
+
+services:
+  - type: web
+    name: covid-backend
+    runtime: python
+    buildCommand: "cd Backend && pip install -r requirements.txt"
+    startCommand: "cd Backend && gunicorn --bind 0.0.0.0:$PORT run:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: covid-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: covid-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: covid-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: covid-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: covid-db
+          property: password
