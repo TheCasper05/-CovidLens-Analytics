@@ -11,11 +11,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all backend files
 COPY Backend/ .
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Expose port (Railway will override with $PORT)
+# Expose port
 EXPOSE 8080
 
-# Start gunicorn
-CMD gunicorn --bind 0.0.0.0:${PORT:-8080} run:app
+# Start using the script
+CMD ["./start.sh"]
