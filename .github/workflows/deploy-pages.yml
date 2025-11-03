@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd Frontend
-          bun install --frozen-lockfile
+          bun install
 
       - name: Build
         run: |
