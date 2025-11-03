@@ -12,24 +12,37 @@ db_pool = None
 def init_db_pool(max_retries=30, retry_delay=2):
     """Initialize database connection pool with retry logic"""
     global db_pool
-    
-    host = os.getenv('DB_HOST', 'localhost')
-    port = os.getenv('DB_PORT', '5432')
-    user = os.getenv('DB_USER', 'labuser')
-    password = os.getenv('DB_PASSWORD', 'labpass')
-    database = os.getenv('DB_NAME', 'labdb')
+
+    # Check if DATABASE_URL is provided (common in cloud platforms like Vercel)
+    database_url = os.getenv('DATABASE_URL')
+
+    if database_url:
+        # Use DATABASE_URL directly
+        connection_params = database_url
+    else:
+        # Use individual environment variables
+        host = os.getenv('DB_HOST', 'localhost')
+        port = os.getenv('DB_PORT', '5432')
+        user = os.getenv('DB_USER', 'labuser')
+        password = os.getenv('DB_PASSWORD', 'labpass')
+        database = os.getenv('DB_NAME', 'labdb')
+        connection_params = {
+            'host': host,
+            'port': port,
+            'user': user,
+            'password': password,
+            'database': database,
+            'connect_timeout': 5
+        }
     
     for attempt in range(max_retries):
         try:
-            db_pool = psycopg2.pool.SimpleConnectionPool(
-                1, 20,
-                host=host,
-                port=port,
-                user=user,
-                password=password,
-                database=database,
-                connect_timeout=5
-            )
+            if isinstance(connection_params, str):
+                # DATABASE_URL provided
+                db_pool = psycopg2.pool.SimpleConnectionPool(1, 20, connection_params)
+            else:
+                # Individual parameters provided
+                db_pool = psycopg2.pool.SimpleConnectionPool(1, 20, **connection_params)
             print(f"✅ Database connection pool created successfully on attempt {attempt + 1}")
             return db_pool
         except Exception as e:
