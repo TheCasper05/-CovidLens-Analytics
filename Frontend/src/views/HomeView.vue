@@ -14,7 +14,8 @@ import {
   getContinents,
 } from "@/services/api";
 
-const title = "COVID-19 Dashboard";
+const currentLocation = ref("Global");
+const currentMetric = ref("Overview");
 const totalCases = ref(0);
 const totalDeaths = ref(0);
 const totalVaccinations = ref(0);
@@ -36,10 +37,16 @@ const chartData = ref([
   { date: "2020-06-01", value: 150000 },
 ]);
 
-function formatNumber(num) {
+function formatNumber(num: any) {
   const value = num.value || num;
   return value.toLocaleString("en-US");
 }
+
+interface Filters {
+  location: string;
+  metric: string;
+}
+
 onMounted(async () => {
   try {
     loading.value = true;
@@ -72,6 +79,20 @@ onMounted(async () => {
 });
 async function handleFiltersApplied(filters) {
   console.log("Filters received in HomeView:", filters);
+
+  // Update current location and metric for dynamic title
+  currentLocation.value = filters.location;
+
+  // Map metric values to user-friendly names
+  const metricNames = {
+    'overall': 'Overview',
+    'total_cases': 'Total Cases',
+    'total_deaths': 'Total Deaths',
+    'total_vaccinations': 'Total Vaccinations',
+    'new_cases': 'New Cases',
+    'new_deaths': 'New Deaths'
+  };
+  currentMetric.value = metricNames[filters.metric] || filters.metric;
 
   isWorldView.value = filters.location === "World";
   filtersApplied.value = true;
@@ -123,6 +144,8 @@ async function handleFiltersApplied(filters) {
 
 function handleFiltersReset() {
   filtersApplied.value = false;
+  currentLocation.value = "Global";
+  currentMetric.value = "Overview";
 }
 </script>
 <template>
@@ -136,10 +159,17 @@ function handleFiltersReset() {
     <!-- Contenido Principal -->
     <main class="flex-1 p-8 overflow-y-auto h-[calc(100vh-4rem)]">
       <div class="max-w-6xl mx-auto">
-        <!-- Título -->
-        <h1 class="text-3xl font-semibold text-gray-800 mb-6">
-          {{ title }}
-        </h1>
+        <!-- Título Dinámico -->
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold text-gray-900">
+            {{ currentLocation }}
+            <span class="text-gray-400 mx-2">•</span>
+            <span class="text-blue-600">{{ currentMetric }}</span>
+          </h1>
+          <p class="text-sm text-gray-500 mt-1">
+            Real-time data analysis and insights
+          </p>
+        </div>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
