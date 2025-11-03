@@ -77,14 +77,14 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-async function handleFiltersApplied(filters) {
+async function handleFiltersApplied(filters: Filters) {
   console.log("Filters received in HomeView:", filters);
 
   // Update current location and metric for dynamic title
   currentLocation.value = filters.location;
 
   // Map metric values to user-friendly names
-  const metricNames = {
+  const metricNames: Record<string, string> = {
     'overall': 'Overview',
     'total_cases': 'Total Cases',
     'total_deaths': 'Total Deaths',
