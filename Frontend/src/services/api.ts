@@ -2,7 +2,7 @@ import axios from "axios";
 import type { ContinentData, SummaryData, TopCountryData, DateRangeData,timeSeriesData } from "@/types/covid";
 
 
-const API_BASE_URL = "http://localhost:5001/api/covid";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/covid";
 
 /* This code snippet is creating an Axios instance named `apliClient` with a specific configuration.
 The `axios.create()` method is used to create a new Axios instance with custom configuration
