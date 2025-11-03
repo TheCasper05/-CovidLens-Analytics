@@ -1,0 +1,5 @@
+# .mailmap - Maps commit authors to proper names
+# Format: Proper Name <proper@email.com> <commit@email.com>
+
+Jean Marthe <jeanmarthem@gmail.com> <gissellemarthelg@gmail.com>
+Jean Marthe <jeanmarthem@gmail.com> TheCasper05 <jeanmarthem@gmail.com>
