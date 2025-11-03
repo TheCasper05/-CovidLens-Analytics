@@ -155,7 +155,7 @@ import TopBar from '@/components/layout/TopBar.vue'
               </div>
               <div class="mt-6 pt-4 border-t border-gray-200">
                 <p class="text-xs text-gray-500">
-                  <strong>Email:</strong> jeanmarthem@gmail.com
+                 <strong>Universidad:</strong> Universidad del Norte
                 </p>
               </div>
             </div>
