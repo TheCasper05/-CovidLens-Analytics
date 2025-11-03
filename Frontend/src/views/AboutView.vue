@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import TopBar from '@/components/layout/TopBar.vue'
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <TopBar />
-
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Project Overview Section -->
       <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
